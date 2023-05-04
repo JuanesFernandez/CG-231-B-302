@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <title>Ac>04/05>JuanFernandez</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+            #text {
+                position: absolute;
+                padding: 10px;
+                width: 100%;
+                height: 100%;
+                text-align: left;
+                color: #550066;
+            } 
+    </style>
+  </head>
+  <body>
+  </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r94/three.min.js"></script>
+    <script type="module">
+        import { OrbitControls } from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
+
+        //Camara
+        var scene = new THREE.Scene();
+
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);//Perspective camera
+        //               THREE.PerspectiveCamera(cono de vision, ancho / alto, limite z cerca, limite z lejos)
+        scene.add(camera);
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0xaaaaaa, 1.0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        camera.position.x = 5;
+        camera.position.y = 5;
+        camera.position.z = 5;
+        camera.lookAt(scene.position);
+
+        //Orbit Controls
+        var controls = new OrbitControls(camera, renderer.domElement);
+
+        //Cuadricula
+        const size = 150;
+        const divisions = 150;
+        const axesHelper = new THREE.AxesHelper(10);
+        scene.add(axesHelper);
+
+        const gridHelper = new THREE.GridHelper(size, divisions);
+        scene.add(gridHelper);
+
+
+        
+        //figura con chat gpt
+        
+function createGeometricFigure(n) {
+  if (n < 4) {
+    console.error("Invalid number of faces.");
+    return;
+  }
+
+  const radius = 1;
+
+  // create vertices of icosahedron
+  const t = (1 + Math.sqrt(5)) / 2;
+  const vertices = [
+    new THREE.Vector3(-1, t, 0).normalize().multiplyScalar(radius),
+    new THREE.Vector3(1, t, 0).normalize().multiplyScalar(radius),
+    new THREE.Vector3(-1, -t, 0).normalize().multiplyScalar(radius),
+    new THREE.Vector3(1, -t, 0).normalize().multiplyScalar(radius),
+    new THREE.Vector3(0, -1, t).normalize().multiplyScalar(radius),
+    new THREE.Vector3(0, 1, t).normalize().multiplyScalar(radius),
+    new THREE.Vector3(0, -1, -t).normalize().multiplyScalar(radius),
+    new THREE.Vector3(0, 1, -t).normalize().multiplyScalar(radius),
+    new THREE.Vector3(t, 0, -1).normalize().multiplyScalar(radius),
+    new THREE.Vector3(t, 0, 1).normalize().multiplyScalar(radius),
+    new THREE.Vector3(-t, 0, -1).normalize().multiplyScalar(radius),
+    new THREE.Vector3(-t, 0, 1).normalize().multiplyScalar(radius)
+  ];
+
+  // create faces of icosahedron
+  const faces = [
+    new THREE.Face3(0, 11, 5),
+    new THREE.Face3(0, 5, 1),
+    new THREE.Face3(0, 1, 7),
+    new THREE.Face3(0, 7, 10),
+    new THREE.Face3(0, 10, 11),
+    new THREE.Face3(1, 5, 9),
+    new THREE.Face3(5, 11, 4),
+    new THREE.Face3(11, 10, 2),
+    new THREE.Face3(10, 7, 6),
+    new THREE.Face3(7, 1, 8),
+    new THREE.Face3(3, 9, 4),
+    new THREE.Face3(3, 4, 2),
+    new THREE.Face3(3, 2, 6),
+    new THREE.Face3(3, 6, 8),
+    new THREE.Face3(3, 8, 9),
+    new THREE.Face3(4, 9, 5),
+    new THREE.Face3(2, 4, 11),
+    new THREE.Face3(6, 2, 10),
+    new THREE.Face3(8, 6, 7),
+    new THREE.Face3(9, 8, 1)
+  ];
+
+  // subdivide faces n - 20 times
+  for (let i = 0; i < n - 20; i++) {
+    const newFaces = [];
+
+    // for each face, create 3 new vertices at the midpoint of each edge
+    for (let j = 0; j < faces.length; j++) {
+      const face = faces[j];
+      const v1 = vertices[face.a];
+      const v2 = vertices[face.b];
+      const v3 = vertices[face.c];
+
+      const v4 = v1.clone().lerp(v2, 0.5);
+      const v5 = v2.clone().lerp(v3, 0.5);
+      const v6 = v1.clone().lerp(v3, 0.5);
+
+      vertices.push(v4.normalize().multiplyScalar(radius));
+      vertices.push(v5.normalize().multiplyScalar(radius));
+    vertices.push(v6.normalize().multiplyScalar(radius));
+
+  const i1 = vertices.length - 3;
+  const i2 = vertices.length - 2;
+  const i3 = vertices.length - 1;
+
+  newFaces.push(new THREE.Face3(face.a, i1, i3));
+  newFaces.push(new THREE.Face3(face.b, i2, i1));
+  newFaces.push(new THREE.Face3(face.c, i3, i2));
+  newFaces.push(new THREE.Face3(i1, i2, i3));
+}
+
+// replace the faces array with the new faces
+faces.splice(0, faces.length);
+faces.push(...newFaces);
+}
+
+// create geometry and material
+const geometry = new THREE.Geometry();
+geometry.vertices = vertices;
+geometry.faces = faces;
+geometry.computeFaceNormals();
+
+const material = new THREE.MeshBasicMaterial({
+color: 0x550066,
+wireframe: true
+});
+
+// create mesh and add to scene
+const mesh = new THREE.Mesh(geometry, material);
+scene.add(mesh);
+}
+
+var fig = createGeometricFigure(12);
+scene.add(fig);
+        
+        //Añadir a la escena
+        document.body.appendChild(renderer.domElement);
+        
+        function render() {
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
+        }
+
+        render();
+
+		</script>
+	</body>
+</html>
